@@ -26,10 +26,10 @@ const io = new Server(server, {
 });
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  auth: {
-    user: "sushmavecham@gmail.com",
-    pass: "vlwt koky mazu airm"
-  }
+ auth: {
+  user: process.env.EMAIL_USER,
+  pass: process.env.EMAIL_PASS
+}
 });
 app.use(cors());
 app.use(express.json());
