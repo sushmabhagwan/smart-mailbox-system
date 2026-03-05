@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Mailbox Dashboard</title>
+
+  <style>
+
+    body{
+        font-family: Arial;
+        text-align:center;
+        margin-top:100px;
+        background:#f2f2f2;
+    }
+
+    .box{
+        background:white;
+        padding:40px;
+        width:300px;
+        margin:auto;
+        border-radius:10px;
+        box-shadow:0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    h1{
+        color:#333;
+    }
+
+    #status{
+        font-size:28px;
+        margin-top:20px;
+        color:green;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>📬 Smart Mailbox</h1>
+
+<div id="status">Loading...</div>
+<div id="time"></div>
+
+<h3>Event History</h3>
+
+<ul id="history"></ul>
+<h3>Mailbox Activity Today</h3>
+<canvas id="activityChart" width="300" height="200"></canvas>
+</div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+const socket = io("http://localhost:3000");
+
+socket.on("mailbox-update", (data) => {
+
+    document.getElementById("status").innerText =
+        "Mailbox: " + data.mailbox.toUpperCase();
+
+    document.getElementById("time").innerText =
+        "Last Event: " + data.lastEvent;
+
+    updateHistory(data.history);
+    loadChart();
+
+});
+
+async function loadStatus(){
+
+    const response = await fetch("http://localhost:3000/status");
+    const data = await response.json();
+
+   const statusElement = document.getElementById("status");
+
+statusElement.innerText = "Mailbox: " + data.mailbox.toUpperCase();
+
+if(data.mailbox === "opened"){
+    statusElement.style.color = "red";
+}else{
+    statusElement.style.color = "green";
+}
+
+    if(data.lastEvent){
+        document.getElementById("time").innerText =
+            "Last Event: " + data.lastEvent;
+    }
+
+}
+
+async function loadHistory(){
+
+    const response = await fetch("http://localhost:3000/history");
+    const data = await response.json();
+
+    updateHistory(data.events);
+
+}
+
+function updateHistory(events){
+
+    const list = document.getElementById("history");
+
+    list.innerHTML = "";
+
+    events.forEach(event => {
+
+        const li = document.createElement("li");
+
+        li.innerText = event.status.toUpperCase() + " - " + event.time;
+
+        list.appendChild(li);
+
+    });
+
+}
+
+loadStatus();
+loadHistory();
+loadChart();
+let chart;
+
+function createChart(data){
+
+  const ctx = document.getElementById('activityChart');
+
+  const labels = Object.keys(data);
+  const values = Object.values(data);
+
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Mailbox Opens',
+        data: values
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+}
+async function loadChart(){
+
+  const res = await fetch("http://localhost:3000/history");
+  const data = await res.json();
+
+  const hourly = {};
+
+  data.events.forEach(e => {
+
+    if(e.status === "opened"){
+
+      const hour = new Date(e.time).getHours();
+
+      if(!hourly[hour]){
+        hourly[hour] = 0;
+      }
+
+      hourly[hour]++;
+
+    }
+
+  });
+
+  createChart(hourly);
+
+}
+</script>
+</body>
+</html>
