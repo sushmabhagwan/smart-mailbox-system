@@ -5,7 +5,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const app = express();
-mongoose.connect("mongodb://127.0.0.1:27017/mailboxDB")
+mongoose.connect(process.env.MONGO_URI)
 .then(() => {
   console.log("MongoDB connected");
 })
@@ -89,8 +89,10 @@ app.get("/history", async (req, res) => {
   });
 
 });
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
 
 function sendEmailAlert() {
