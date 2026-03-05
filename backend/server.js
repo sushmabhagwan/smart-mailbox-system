@@ -33,6 +33,13 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
+transporter.verify(function(error, success) {
+  if (error) {
+    console.log("SMTP connection error:", error);
+  } else {
+    console.log("SMTP server is ready to send emails");
+  }
+});
 app.use(cors());
 app.use(express.json());
 
