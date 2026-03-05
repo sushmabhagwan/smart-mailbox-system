@@ -116,21 +116,3 @@ This alert was sent from your Smart Mailbox System.`
   }
 
 }
-app.get("/test-email", async (req, res) => {
-
-  try {
-
-    const response = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: "sushmabhagwan@icloud.com",
-      subject: "Test Email",
-      text: "Resend is working!"
-    });
-
-    res.json(response);
-
-  } catch (error) {
-    res.json(error);
-  }
-
-});
