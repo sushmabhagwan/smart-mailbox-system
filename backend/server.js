@@ -100,7 +100,7 @@ function sendEmailAlert() {
   const time = new Date().toLocaleString();
 
   const mailOptions = {
-    from: "sushmavecham@gmail.com",
+    from: process.env.EMAIL_USER,
     to: "sushmabhagwan01@gmail.com",
     subject: "Mailbox Alert",
     text: `📬 Mailbox opened!
@@ -119,5 +119,4 @@ This alert was sent from your Smart Mailbox System.`
     }
 
   });
-
 }
