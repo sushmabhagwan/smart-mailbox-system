@@ -116,3 +116,22 @@ This alert was sent from your Smart Mailbox System.`
   }
 
 }
+app.get("/test-email", async (req, res) => {
+  try {
+
+    const response = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "sushmabhagwan@icloud.com",
+      subject: "Test Email",
+      text: "Your Smart Mailbox email system is working."
+    });
+
+    console.log("Test email response:", response);
+
+    res.json(response);
+
+  } catch (error) {
+    console.log("Test email error:", error);
+    res.json(error);
+  }
+});
