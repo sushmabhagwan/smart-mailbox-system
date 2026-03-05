@@ -122,7 +122,7 @@ app.get("/test-email", async (req, res) => {
 
     const response = await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: "sushmabhagwan01@gmail.com",
+      to: "sushmabhagwan@icloud.com",
       subject: "Test Email",
       text: "Resend is working!"
     });
