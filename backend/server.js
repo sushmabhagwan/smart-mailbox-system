@@ -100,7 +100,7 @@ async function sendEmailAlert() {
 
     await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: "sushmabhagwan01@gmail.com",
+      to: "sushmabhagwan@icloud.com",
       subject: "Mailbox Alert",
       text: `📬 Mailbox opened!
 
