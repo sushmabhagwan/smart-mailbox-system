@@ -54,7 +54,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 
-const socket = io("http://localhost:3000");
+const socket = io("https://smart-mailbox-backend.onrender.com");
 
 socket.on("mailbox-update", (data) => {
 
@@ -71,7 +71,7 @@ socket.on("mailbox-update", (data) => {
 
 async function loadStatus(){
 
-    const response = await fetch("http://localhost:3000/status");
+    const response = await fetch("https://smart-mailbox-backend.onrender.com/status");
     const data = await response.json();
 
    const statusElement = document.getElementById("status");
@@ -93,7 +93,7 @@ if(data.mailbox === "opened"){
 
 async function loadHistory(){
 
-    const response = await fetch("http://localhost:3000/history");
+    const response = await fetch("https://smart-mailbox-backend.onrender.com/history");
     const data = await response.json();
 
     updateHistory(data.events);
@@ -152,7 +152,7 @@ function createChart(data){
 }
 async function loadChart(){
 
-  const res = await fetch("http://localhost:3000/history");
+  const res = await fetch("https://smart-mailbox-backend.onrender.com/history");
   const data = await res.json();
 
   const hourly = {};
