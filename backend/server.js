@@ -1,5 +1,7 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -24,26 +26,8 @@ const io = new Server(server, {
     origin: "*"
   }
 });
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
-transporter.verify(function(error, success) {
-  if (error) {
-    console.log("SMTP connection error:", error);
-  } else {
-    console.log("SMTP server is ready to send emails");
-  }
-});
+
+
 app.use(cors());
 app.use(express.json());
 
@@ -108,28 +92,45 @@ server.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
 
-function sendEmailAlert() {
+async function sendEmailAlert() {
 
   const time = new Date().toLocaleString();
 
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: "sushmabhagwan01@gmail.com",
-    subject: "Mailbox Alert",
-    text: `📬 Mailbox opened!
+  try {
+
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "sushmabhagwan01@gmail.com",
+      subject: "Mailbox Alert",
+      text: `📬 Mailbox opened!
 
 Time: ${time}
 
 This alert was sent from your Smart Mailbox System.`
-  };
+    });
 
-  transporter.sendMail(mailOptions, (error, info) => {
+    console.log("Email sent successfully");
 
-    if (error) {
-      console.log("Email error:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
+  } catch (error) {
+    console.log("Email error:", error);
+  }
 
-  });
 }
+app.get("/test-email", async (req, res) => {
+
+  try {
+
+    const response = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "sushmabhagwan01@gmail.com",
+      subject: "Test Email",
+      text: "Resend is working!"
+    });
+
+    res.json(response);
+
+  } catch (error) {
+    res.json(error);
+  }
+
+});
